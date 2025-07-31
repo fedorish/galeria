@@ -9,7 +9,7 @@ export default function ModalScreen() {
       <Galeria urls={urls} theme="dark">
         <Galeria.Image
           onIndexChange={(e) =>
-            console.log('IndeX: ', e.nativeEvent.currentIndex)
+            console.log('Index: ', e.nativeEvent.currentIndex)
           }
         >
           <Image
