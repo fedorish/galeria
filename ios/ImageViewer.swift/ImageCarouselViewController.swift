@@ -56,7 +56,7 @@ public class ImageCarouselViewController: UIPageViewController,
         _toolbar.isTranslucent = true
         _toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         _toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        _toolbar.alpha = 0.0  // Start hidden like the nav bar
+        _toolbar.alpha = 0.0
         return _toolbar
     }()
 
@@ -132,7 +132,6 @@ public class ImageCarouselViewController: UIPageViewController,
         view.addSubview(toolbar)
         toolbar.translatesAutoresizingMaskIntoConstraints = false
         toolbar.backgroundColor = .clear
-        
 
         NSLayoutConstraint.activate([
             toolbar.leftAnchor.constraint(equalTo: view.leftAnchor),
