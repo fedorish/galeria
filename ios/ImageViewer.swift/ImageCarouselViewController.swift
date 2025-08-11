@@ -33,7 +33,6 @@ public class ImageCarouselViewController: UIPageViewController,
         didSet {
             navItem.leftBarButtonItem?.tintColor = theme.tintColor
             backgroundView?.backgroundColor = theme.color
-            bottomContainerView.alpha = bottomContainerView.alpha  // Keep current alpha
         }
     }
 
@@ -53,7 +52,7 @@ public class ImageCarouselViewController: UIPageViewController,
     private(set) lazy var bottomContainerView: UIView = {
         let _containerView = UIView()
         _containerView.backgroundColor = .clear
-        _containerView.alpha = 0.0
+        _containerView.alpha = 1.0  // Start visible to match navBar
         return _containerView
     }()
 
@@ -120,7 +119,7 @@ public class ImageCarouselViewController: UIPageViewController,
 
         navItem.leftBarButtonItem = closeBarButton
         navItem.leftBarButtonItem?.tintColor = theme.tintColor
-        navBar.alpha = 0.0
+        navBar.alpha = 1.0  // Start visible to match bottomContainerView
         navBar.items = [navItem]
         navBar.insert(to: view)
     }
@@ -136,8 +135,33 @@ public class ImageCarouselViewController: UIPageViewController,
             bottomContainerView.rightAnchor.constraint(equalTo: view.rightAnchor),
             bottomContainerView.bottomAnchor.constraint(
                 equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomContainerView.heightAnchor.constraint(equalToConstant: 0),  // Start with 0 height
+            bottomContainerView.heightAnchor.constraint(equalToConstant: 60),  // Give it some height for testing
         ])
+
+        // Add a test label to see the container
+        let testLabel = UILabel()
+        testLabel.text = "🎨 Test Bottom Container - Tap to show/hide!"
+        testLabel.textAlignment = .center
+        testLabel.textColor = .white
+        testLabel.backgroundColor = .systemBlue
+        testLabel.layer.cornerRadius = 8
+        testLabel.layer.masksToBounds = true
+        testLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+
+        bottomContainerView.addSubview(testLabel)
+        testLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            testLabel.leftAnchor.constraint(equalTo: bottomContainerView.leftAnchor, constant: 16),
+            testLabel.rightAnchor.constraint(
+                equalTo: bottomContainerView.rightAnchor, constant: -16),
+            testLabel.topAnchor.constraint(equalTo: bottomContainerView.topAnchor, constant: 8),
+            testLabel.bottomAnchor.constraint(
+                equalTo: bottomContainerView.bottomAnchor, constant: -8),
+        ])
+
+        // Ensure both navBar and bottomContainer start with the same alpha
+        bottomContainerView.alpha = navBar.alpha
     }
 
     /// Adds a React Native view to the bottom container

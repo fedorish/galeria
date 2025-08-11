@@ -112,11 +112,13 @@ class ImageViewerController: UIViewController,
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navBar?.alpha = 1.0
+        self.bottomContainerView?.alpha = 1.0
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.navBar?.alpha = 0.0
+        self.bottomContainerView?.alpha = 0.0
     }
 
     override func viewWillLayoutSubviews() {
