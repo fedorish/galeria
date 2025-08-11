@@ -6,8 +6,8 @@ class ImageViewerController: UIViewController,
 
     var imageView: UIImageView = UIImageView(frame: .zero)
     let imageLoader: ImageLoader
-    
-    var backgroundView:UIView? {
+
+    var backgroundView: UIView? {
         guard let _parent = parent as? ImageCarouselViewController
         else { return nil }
         return _parent.backgroundView
@@ -21,11 +21,11 @@ class ImageViewerController: UIViewController,
         else { return nil }
         return _parent.navBar
     }
-    
-    var toolbar: UIToolbar? {
+
+    var bottomContainerView: UIView? {
         guard let _parent = parent as? ImageCarouselViewController
         else { return nil }
-        return _parent.toolbar
+        return _parent.bottomContainerView
     }
 
     // MARK: Layout Constraints
@@ -112,13 +112,11 @@ class ImageViewerController: UIViewController,
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.navBar?.alpha = 1.0
-        self.toolbar?.alpha = 1.0
     }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.navBar?.alpha = 0.0
-        self.toolbar?.alpha = 0.0
     }
 
     override func viewWillLayoutSubviews() {
@@ -202,13 +200,13 @@ class ImageViewerController: UIViewController,
 
     @objc
     func didSingleTap(_ recognizer: UITapGestureRecognizer) {
-        
+
         let currentNavAlpha = self.navBar?.alpha ?? 0.0
-        let currentToolbarAlpha = self.toolbar?.alpha ?? 0.0
-        
+        let currentBottomContainerAlpha = self.bottomContainerView?.alpha ?? 0.0
+
         UIView.animate(withDuration: 0.235) {
             self.navBar?.alpha = currentNavAlpha > 0.5 ? 0.0 : 1.0
-            self.toolbar?.alpha = currentToolbarAlpha > 0.5 ? 0.0 : 1.0
+            self.bottomContainerView?.alpha = currentBottomContainerAlpha > 0.5 ? 0.0 : 1.0
         }
     }
 

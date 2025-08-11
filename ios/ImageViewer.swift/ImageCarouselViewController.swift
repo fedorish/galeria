@@ -33,8 +33,7 @@ public class ImageCarouselViewController: UIPageViewController,
         didSet {
             navItem.leftBarButtonItem?.tintColor = theme.tintColor
             backgroundView?.backgroundColor = theme.color
-            toolbar.tintColor = theme.tintColor
-
+            bottomContainerView.alpha = bottomContainerView.alpha  // Keep current alpha
         }
     }
 
@@ -51,13 +50,11 @@ public class ImageCarouselViewController: UIPageViewController,
         return _navBar
     }()
 
-    internal(set) lazy var toolbar: UIToolbar = {
-        let _toolbar = UIToolbar(frame: .zero)
-        _toolbar.isTranslucent = true
-        _toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
-        _toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        _toolbar.alpha = 0.0
-        return _toolbar
+    private(set) lazy var bottomContainerView: UIView = {
+        let _containerView = UIView()
+        _containerView.backgroundColor = .clear
+        _containerView.alpha = 0.0
+        return _containerView
     }()
 
     private(set) lazy var backgroundView: UIView? = {
@@ -128,42 +125,55 @@ public class ImageCarouselViewController: UIPageViewController,
         navBar.insert(to: view)
     }
 
-    private func addToolbar() {
-        view.addSubview(toolbar)
-        toolbar.translatesAutoresizingMaskIntoConstraints = false
-        toolbar.backgroundColor = .clear
+    private func addBottomContainer() {
+        // Add the container view to the main view
+        view.addSubview(bottomContainerView)
+        bottomContainerView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            toolbar.leftAnchor.constraint(equalTo: view.leftAnchor),
-            toolbar.rightAnchor.constraint(equalTo: view.rightAnchor),
-            toolbar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            // Container view constraints
+            bottomContainerView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            bottomContainerView.rightAnchor.constraint(equalTo: view.rightAnchor),
+            bottomContainerView.bottomAnchor.constraint(
+                equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            bottomContainerView.heightAnchor.constraint(equalToConstant: 0),  // Start with 0 height
         ])
     }
 
-    // private func setupToolbar() {
-    //     let flexSpace = UIBarButtonItem(
-    //         barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+    /// Adds a React Native view to the bottom container
+    /// - Parameter reactNativeView: The view to add (ExpoView, React Native view, etc.)
+    /// - Parameter height: The height of the React Native view (default: 44)
+    public func addReactNativeViewToBottom(_ reactNativeView: UIView, height: CGFloat = 44) {
+        // Add the React Native view to the container
+        bottomContainerView.addSubview(reactNativeView)
+        reactNativeView.translatesAutoresizingMaskIntoConstraints = false
 
-    //     let shareButton = UIBarButtonItem(
-    //         barButtonSystemItem: .action,
-    //         target: self,
-    //         action: #selector(shareTapped))
+        // Position it in the container
+        NSLayoutConstraint.activate([
+            reactNativeView.leftAnchor.constraint(equalTo: bottomContainerView.leftAnchor),
+            reactNativeView.rightAnchor.constraint(equalTo: bottomContainerView.rightAnchor),
+            reactNativeView.topAnchor.constraint(equalTo: bottomContainerView.topAnchor),
+            reactNativeView.heightAnchor.constraint(equalToConstant: height),
+            reactNativeView.bottomAnchor.constraint(equalTo: bottomContainerView.bottomAnchor),
+        ])
 
-    //     let bookmarkButton = UIBarButtonItem(
-    //         image: UIImage(systemName: "bookmark"),
-    //         style: .plain,
-    //         target: self,
-    //         action: #selector(bookmarkTapped))
+        // Update container height to accommodate the React Native view
+        bottomContainerView.heightAnchor.constraint(equalToConstant: height).isActive = true
+    }
 
-    //     let infoButton = UIBarButtonItem(
-    //         image: UIImage(systemName: "info.circle"),
-    //         style: .plain,
-    //         target: self,
-    //         action: #selector(infoTapped))
+    /// Shows or hides the bottom container (React Native views)
+    /// - Parameter visible: Whether to animate the transition
+    public func setBottomContainerVisible(_ visible: Bool, animated: Bool = true) {
+        let targetAlpha: CGFloat = visible ? 1.0 : 0.0
 
-    //     toolbar.items = [bookmarkButton, flexSpace, shareButton, flexSpace, infoButton]
-    //     toolbar.tintColor = theme.tintColor
-    // }
+        if animated {
+            UIView.animate(withDuration: 0.3) {
+                self.bottomContainerView.alpha = targetAlpha
+            }
+        } else {
+            bottomContainerView.alpha = targetAlpha
+        }
+    }
 
     private func addBackgroundView() {
         guard let backgroundView = backgroundView else { return }
@@ -205,8 +215,7 @@ public class ImageCarouselViewController: UIPageViewController,
 
         addBackgroundView()
         addNavBar()
-        addToolbar()
-        // setupToolbar()
+        addBottomContainer()
         applyOptions()
 
         dataSource = self
